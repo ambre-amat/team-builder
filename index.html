@@ -50,13 +50,13 @@
 		    <div class="col-md-4">
                 <div class="divUser">
                     <div class="form-group">
-                        <input class="form-control" placeholder="Prénom" type="text" id="prenom" />
+                        <input v-model="prenomPersonne" class="form-control" placeholder="Prénom" type="text" id="prenom" />
                     </div>
                     <div class="form-group">
-                        <input class="form-control" placeholder="Nom" type="text" id="nom" />
+                        <input v-model="nomPersonne" class="form-control" placeholder="Nom" type="text" id="nom" />
                     </div>
                     <div class="form-group">
-                        <select class="form-control" id="MyUserTeam">
+                        <select v-model="equipePersonne" class="form-control" id="MyUserTeam">
                             <option value="0">Pas d'Equipe</option>		
                         </select>
                     </div>
@@ -68,7 +68,7 @@
                 </div>
 		        <div class="divListUser">
 			        <table v-for="(p,index) in tableauPersonne" id="tabListUser">
-                        {{p.tableauPersonne}}
+                       {{p.tableauPersonne}}
 			        </table>
 		        </div>
 	        </div>
@@ -84,6 +84,9 @@
                     tableauEquipe:[],
                     tableauPersonne:[],
                     nomEquipe:"",
+                    prenomPersonne:"",
+                    nomPersonne:"",
+                    equipePersonne:"",
                },
                methods:{
                    ajouterEquipe(){
@@ -107,10 +110,57 @@
                            }
                        )
                    },
-                   ajouterPersonne(){},
-                   supprimerEquipe(){},
-                   supprimerPersonne(){}
+                   ajouterPersonne(){
+                    let p={}
+                    p.nom=this.nomPersonne
+                    p.prenom=this.prenomPresonne
+                    p.equipe=this.personneEquipe
+                    this.nomPersonne=""
+                    this.prenomPersonne=""
+
+                    let url="./tp4/public/personnes"
+                    let param={}
+                    param.methods='POST'
+                    param.header={"content-type":"application/json"}
+                    param.body=JSON.stringify(p)
+
+                    fetch(url,param)
+                    .then(response=>response.json())
+                    .then(
+                        info=>{
+                            console.log(info)
+                            p.id=info.id
+                            this.tableau.push(p)
+                        }
+                    )
                },
+                supprimerEquipe(){
+                    this.tableauEquipe.splice(i,1)
+                    let id=this.tableauEquipe[i].id
+                    let url="./tp4/public/equipes/"+id
+                    
+                    let param={}
+                    param.method="DELETE"
+                    param.header={"content-Type":"application/json"}
+
+                    fetch(url, param)
+                    .then(response=>response.json())
+                    .then(info=>console.log(info))
+                },
+                supprimerPersonne(){
+                    this.tableauPersonne.splice(i,1)
+                    let id=this.tableauPersonne[i].id
+                    let url="./tp4/public/personnes/"+id
+                    
+                    let param={}
+                    param.method="DELETE"
+                    param.header={"content-Type":"application/json"}
+
+                    fetch(url, param)
+                    .then(response=>response.json())
+                    .then(info=>console.log(info))
+                }
+                },
                mounted(){
                 let url='./tp4/public/personnes'
                 fetch(url)
