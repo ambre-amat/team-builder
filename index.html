@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mini projet Equipe de personnes</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />	
+
+	<style>
+		.divListUser,.divUser{
+			background-color: #ccc;
+			padding: 20px;
+			border-radius: 20px
+		}
+		.divListUser{
+			margin-top:20px;
+			border-radius: 20px
+		}	
+
+		.divTeam{
+			background-color: #ccc;
+			padding: 20px;
+			border-radius: 20px
+		}
+		#tabListUser td{ height: 45px; width:120px;}
+
+
+	</style>
+</head>
+<body>
+	<div class="container mt-3" id="app">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="divTeam">
+					<div class="row">
+						<div class="col-4">
+							<input v-model="nomEquipe" class="form-control"  id="team" placeholder="Nom de l'Equipe">
+						</div>
+						<div class="col-8">
+							<button class="btn btn-success" id="btnAddTeam" @click="ajouterEquipe()">
+							    <i class="fa fa-plus"></i>
+						    </button>
+					    </div>
+				    </div>
+			    </div>
+                <div v-for="(e,index) in tableauEquipe">
+                    {{e.tableauEquipe}}
+                </div>
+		    </div>
+		    <div class="col-md-4">
+                <div class="divUser">
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Prénom" type="text" id="prenom" />
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Nom" type="text" id="nom" />
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="MyUserTeam">
+                            <option value="0">Pas d'Equipe</option>		
+                        </select>
+                    </div>
+                    <div class="form-group text-center mb-0">
+                        <button class="btn btn-success btn-lg " id="btnAddUser">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+		        <div class="divListUser">
+			        <table v-for="(p,index) in tableauPersonne" id="tabListUser">
+                        {{p.tableauPersonne}}
+			        </table>
+		        </div>
+	        </div>
+        </div>
+    </div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>    
+    <script>
+       const app = new Vue(
+           {
+               el:"#app",
+               data:{
+                    tableauEquipe:[],
+                    tableauPersonne:[],
+                    nomEquipe:"",
+               },
+               methods:{
+                   ajouterEquipe(){
+                       let e={}
+                       e.nom=this.nomEquipe
+                       this.nomEquipe=""
+
+                       let url="./tp4/public/equipes"
+                       let param={}
+                       param.methods='POST'
+                       param.header={"content-type":"application/json"}
+                       param.body=JSON.stringify(e)
+
+                       fetch(url,param)
+                       .then(response=>response.json())
+                       .then(
+                           info=>{
+                               console.log(info)
+                               e.id=info.id
+                               this.tableau.push(e)
+                           }
+                       )
+                   },
+                   ajouterPersonne(){},
+                   supprimerEquipe(){},
+                   supprimerPersonne(){}
+               },
+               mounted(){
+                let url='./tp4/public/personnes'
+                fetch(url)
+                .then(response=>response.json())
+                .then(tab=>{this.tableauPersonne=tab})
+
+                let url2='./tp4/public/equipes'
+                fetch(url2)
+                .then(response=>response.json())
+                .then(tab=>{this.tableauEquipe=tab})
+               }
+           }
+       )
+    </script>
+</body>
+</html>
